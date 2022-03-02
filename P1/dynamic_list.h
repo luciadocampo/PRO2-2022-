@@ -48,6 +48,6 @@ tItemL getItem(tPosL, tList);
 
 void updateItem(tItemL, tPosL, tList *);
 
-tPosL findItem(tNickname, tList);
+tPosL findItem(tProductId , tList);
 
 #endif

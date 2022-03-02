@@ -46,7 +46,8 @@ tPosL last(tList L) {
 
 //**********************************************
 tPosL next(tPosL p, tList L) {
-    /* Objetivo: devuelve la posición en la lista del elemento siguiente al de la posición indicada (o LNULL si la posición no tiene siguiente)
+    /* Objetivo: devuelve la posición en la lista del elemento siguiente al de la posición indicada
+     * (o LNULL si la posición no tiene siguiente)
      * Precondiciones: la posición indicada es una posición válida en la lista
      */
     return p->next;
@@ -54,7 +55,8 @@ tPosL next(tPosL p, tList L) {
 
 //**********************************************
 tPosL previous(tPosL p, tList L) {
-    /* Objetivo: devuelve la posición en la lista del elemento anterior al de la posición indicada ( o LNULL si la posición no tiene anterior)
+    /* Objetivo: devuelve la posición en la lista del elemento anterior al de la posición indicada
+     * ( o LNULL si la posición no tiene anterior)
      * Precondiciones:la posición indicada es una posición válida en la lista
      */
     tPosL q;
@@ -68,7 +70,7 @@ tPosL previous(tPosL p, tList L) {
     }
 }
 //**********************************************
-bool createNode(tPosL *p) {
+bool createNode(tPosL *p) { //Funcion auxiliar
     /* Objetivo: Crear nodo
      * Entradas: Posición
      * Salidas: Nodo creado
@@ -79,7 +81,7 @@ bool createNode(tPosL *p) {
     return *p != LNULL;
 }
 //**********************************************
-tPosL findPosition(tList L, tItemL d){
+tPosL findPosition(tList L, tItemL d){ //funcion auxiliar
     /* Objetivo: Encontrar una posición en la lista
      * Entradas: Lista,Item
      * Salidas: Posición
@@ -88,7 +90,7 @@ tPosL findPosition(tList L, tItemL d){
 
     tPosL p; //Posición en la lista
     p=L;
-    while((p->next!=LNULL)&&(strcmp((p->next->data).productId,d.productId) < 0))
+    while((p->next!=LNULL) && (strcmp((p->next->data).productId,d.productId) < 0))
         p=p->next;
     return p;
 }
@@ -96,10 +98,12 @@ tPosL findPosition(tList L, tItemL d){
 //*************************************************************************
 
 bool insertItem(tItemL d, tPosL pos, tList *L) {
-    /* Objetivo:inserta un elemento en la lista antes de la posición indicada
+    /* Objetivo:Inserta un elemento en la lista antes de la posición indicada. Si la posición es LNULL,
+       entonces se añade al final
      * Salidas: true si el elemento fue insertado; false en caso contrario
      * Precondiciones: la posición indicada es una posición válida en la lista o bien nula
-     * Postcondiciones: Las posiciones de los elementos de la lista posteriores a la del elemento insertado pueden haber variado
+     * Postcondiciones: Las posiciones de los elementos de la lista posteriores a la del elemento
+     * insertado pueden haber variado
      */
     tPosL q;
     if (!createNode(&q))  //creamos el nodo y preguntamos si se ha podido o no
@@ -123,9 +127,9 @@ bool insertItem(tItemL d, tPosL pos, tList *L) {
 //**********************************************
 void deleteAtPosition(tPosL p, tList *L) {
     /* Objetivo: elimina de la lista el elemento que ocupa la posición indicada
-    * Precondiciones: la posición indicada es una posición válida en la lista
-    * Postcondiciones: las posiciones de los elementos de la lista posteriores a la de la posición eliminada pueden haber cambiado
-    */
+     * Precondiciones: la posición indicada es una posición válida en la lista
+     * Postcondiciones: las posiciones de los elementos de la lista posteriores a la de la posición eliminada pueden haber cambiado
+     */
     tPosL q;
     if (p == *L) {
         *L = (*L)->next;
@@ -160,7 +164,8 @@ void updateItem(tItemL n, tPosL p, tList *L) {
 
 //**********************************************
 tPosL findItem(tProductId d, tList L) {
-    /* Objetivo: devuelve la posición del primer elemento de la lista cuyo nick de usuario se corresponda con el indicado ( o LNULL si no existe tal elemento)
+    /* Objetivo: devuelve la posición del primer elemento de la lista cuyo identificador de
+     * producto se corresponda con el indicado ( o LNULL si no existe tal elemento)
      * Precondición: la lista debe estar previamente inicializada
      */
     tPosL p = L;
@@ -172,12 +177,4 @@ tPosL findItem(tProductId d, tList L) {
         }
     }
     return p;
-    /*else {
-        for (q = L; (strcmp(q->data.productId, d) != 0) && (q->next != LNULL);
-             q = q->next) {
-        }
-        if (strcmp(q->data.productId, d) != 0)
-            q = LNULL;
-    }
-    return p;*/
 }

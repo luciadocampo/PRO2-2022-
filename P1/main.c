@@ -21,8 +21,25 @@
 #include "static_list.h"
 #endif
 
+//NEW: alta nuevo producto
+void New(tList *list, tProductId product, tUserId user, tProductCategory category, tProductPrice price){
 
+}
 
+//DELETE: baja producto
+void Delete(tList *list, tProductId product){
+
+}
+
+//BID: puja por un producto
+void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
+
+}
+
+//STATS: Lista productos actuales y sus datos
+void Stats(tList *list){
+
+}
 
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4) {
 

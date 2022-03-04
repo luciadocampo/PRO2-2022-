@@ -45,13 +45,20 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
 
     switch (command) {
         case 'N':
-            printf("Command: %s %c %s %s %s %s\n", commandNumber, command, param1, param2, param3, param4);
+            printf("********************");
+            printf("%s %c: product %s seller %s category %s price %s\n", commandNumber, command, param1, param2, param3, param4);
             break;
         case 'S':
+            printf("********************");
+            printf("%s %c\n", commandNumber, command);
             break;
         case 'B':
+            printf("********************");
+            printf("%s %c: product %s seller %s category %s price %s\n", commandNumber, command, param1, param2, param3, param4);
             break;
         case 'D':
+            printf("********************");
+
             break;
         default:
             break;

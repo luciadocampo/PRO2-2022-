@@ -41,7 +41,7 @@ void Stats(tList *list){
 
 }
 
-void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4) {
+void processCommand(tList *list, char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4) {
 
     switch (command) {
         case 'N':
@@ -54,7 +54,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             break;
         case 'B':
             printf("********************");
-            printf("%s %c: product %s bidder %s price %s\n", commandNumber, command, param1, param2, param3);
+            printf("%s %c: product %s bidder %s price %s\n", commandNumber, command, param1, param2, param4);
             break;
         case 'D':
             printf("********************");
@@ -71,6 +71,9 @@ void readTasks(char *filename) {
     const char delimiters[] = " \n\r";
     char buffer[MAX_BUFFER];
 
+    tList list;
+    createEmptyList(&list);
+
     f = fopen(filename, "r");
 
     if (f != NULL) {
@@ -83,7 +86,7 @@ void readTasks(char *filename) {
             param3 = strtok(NULL, delimiters);
             param4 = strtok(NULL, delimiters);
 
-            processCommand(commandNumber, command[0], param1, param2, param3, param4);
+            processCommand(&list, commandNumber, command[0], param1, param2, param3, param4);
         }
 
         fclose(f);

@@ -31,7 +31,7 @@ bool copyList(tList, tList*);
 void updateItem(tItemL, tPosL, tList*);
 void deleteAtPosition(tPosL, tList*);
 //void deleteList(tList*);
-tPosL findItem(tNickname, tList);
+tPosL findItem(tProductId , tList);
 bool isEmptyList(tList);
 tItemL getItem(tPosL, tList);
 tPosL first(tList);

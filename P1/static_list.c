@@ -86,7 +86,7 @@ bool insertItem(tItemL item, tPosL pos, tList *L) {
             L->data[0] = item;
         } else {
             L->LastPos++;//Posicion +1.
-            for (pos = L->LastPos - 1; (pos >= 0) && (strcmp(item.nickname, L->data[pos].nickname) <0); pos--) {
+            for (pos = L->LastPos - 1; (pos >= 0) && (strcmp(item.productId, L->data[pos].productId) <0); pos--) {
 
                 L->data[pos + 1] = L->data[pos];//
             }
@@ -124,12 +124,12 @@ void updateItem(tItemL d, tPosL p, tList *L) {
      * Precondiciones: la posición indicada es una posición válida en la lista
      * Postcondiciones: el orden de los elementos de la lista no se ve modificado
      */
-    L->data[p].numPlay = d.numPlay;
+    L->data[p] = d;
 
 }
 
 //**********************************************
-tPosL findItem(tNickname d, tList L) {
+tPosL findItem(tProductId d, tList L) {
     /* Objetivo: devuelve la posición del primer elemento de la lista cuyo nick de usuario se corresponda con el indicado ( o LNULL si no existe tal elemento)
      * Precondición: la lista debe estar previamente inicializada
      */
@@ -137,7 +137,7 @@ tPosL findItem(tNickname d, tList L) {
         return LNULL;
     } else {
         for (tPosL i = first(L); (i <= L.LastPos); i++) {
-            if (strcmp(L.data[i].nickname, d) == 0) {
+            if (strcmp(L.data[i].productId, d) == 0) {
                 return i;
             }
         }

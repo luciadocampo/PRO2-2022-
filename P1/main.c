@@ -54,11 +54,11 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             break;
         case 'B':
             printf("********************");
-            printf("%s %c: product %s seller %s category %s price %s\n", commandNumber, command, param1, param2, param3, param4);
+            printf("%s %c: product %s bidder %s price %s\n", commandNumber, command, param1, param2, param3);
             break;
         case 'D':
             printf("********************");
-
+            printf("%s %c: product %s", commandNumber, command, param1);
             break;
         default:
             break;

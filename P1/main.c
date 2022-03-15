@@ -39,7 +39,8 @@ void New(tList *list, tProductId product, tUserId user, tProductCategory categor
             }else{
                 strcpy(categoria, "painting");
             }
-            printf("* New: product %s seller %s category %s price %.2f\n", item.productId, item.seller, categoria, item.productPrice);
+            printf("* New: product %s seller %s category %s price %.2f\n",
+                   item.productId, item.seller, categoria, item.productPrice);
         } else {
             printf("+ Error: New not possible\n");
         }
@@ -50,7 +51,23 @@ void New(tList *list, tProductId product, tUserId user, tProductCategory categor
 
 //DELETE: baja producto
 void Delete(tList *list, tProductId product){
-
+    tPosL pos;
+    tItemL item;
+    pos = findItem(product, *list);
+    if(pos != LNULL){
+        item = getItem(pos, *list);
+        char* categoria = malloc(sizeof(char));
+        if(item.productCategory == 0){
+            strcpy(categoria, "book");
+        }else{
+            strcpy(categoria, "painting");
+        }
+        printf("* Delete: product %s seller %s category %s price %.2f bids %d\n",
+               item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
+        deleteAtPosition(pos, list);
+    }else{
+        printf("+ Error: Delete not possible\n");
+    }
 }
 
 //BID: puja por un producto
@@ -60,16 +77,57 @@ void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
 
 //STATS: Lista productos actuales y sus datos
 void Stats(tList *list){
+    tPosL pos;
+    tItemL item;
+    int numProductsBook = 0;
+    int numProductsPainting = 0;
+    float suma_book = 0.0;
+    float suma_painting = 0.0;
+    float average_book = 0.0;
+    float average_painting = 0.0;
+    char* categoria = malloc(sizeof(char));
+
+    if (!isEmptyList(*list)) {
+        pos = first(*list);
+        while (pos != LNULL) {
+            item = getItem(pos, *list);
+            if (item.productCategory == 0) {
+                strcpy(categoria, "book");
+            } else {
+                strcpy(categoria, "painting");
+            }
+            printf("Product %s seller %s category %s price %.2f bids %d\n",
+                   item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
+            if (strcmp(categoria, "book") == 0) {
+                numProductsBook++;
+                suma_book += item.productPrice;
+                average_book = (float) (suma_book / numProductsBook);
+            } else {
+                numProductsPainting++;
+                suma_painting += item.productPrice;
+                average_painting = (float) (suma_painting / numProductsPainting);
+            }
+            pos = next(pos, *list);
+        }
+        printf("\nCategory  Products    Price  Average\n");
+        printf("Book      %8d %8.2f %8.2f\n", numProductsBook, suma_book, average_book);
+        printf("Painting  %8d %8.2f %8.2f\n", numProductsPainting, suma_painting, average_painting);
+
+    } else {
+        printf("+ Error: Stats not possible\n");
+    }
 
 }
 
 tProductCategory char_to_category(char* string){
     tProductCategory category;
     if(strcmp(string, "book") == 0){
-        return category = book;
+        category = book;
+        return category;
     }
     if(strcmp(string, "painting") == 0){
-        return category = painting;
+        category = painting;
+        return category;
     }
     printf("Categoria inexistente");
     return 0;
@@ -86,6 +144,7 @@ void processCommand(tList *list, char *commandNumber, char command, char *param1
         case 'S':
             printf("********************\n");
             printf("%s %c\n", commandNumber, command);
+            Stats(list);
             break;
         case 'B':
             printf("********************\n");
@@ -94,6 +153,7 @@ void processCommand(tList *list, char *commandNumber, char command, char *param1
         case 'D':
             printf("********************\n");
             printf("%s %c: product %s\n", commandNumber, command, param1);
+            Delete(list, param1);
             break;
         default:
             break;
@@ -148,6 +208,7 @@ int main(int nargs, char **args) {
 
     return 0;
 }
+
 
 
 

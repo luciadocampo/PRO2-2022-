@@ -29,25 +29,15 @@ struct tNode {
 };
 
 void createEmptyList(tList *);
-
 bool isEmptyList(tList);
-
 tPosL first(tList);
-
 tPosL last(tList);
-
 tPosL next(tPosL, tList);
-
 tPosL previous(tPosL, tList);
-
 bool insertItem(tItemL,tPosL pos, tList *);
-
 void deleteAtPosition(tPosL, tList *);
-
 tItemL getItem(tPosL, tList);
-
 void updateItem(tItemL, tPosL, tList *);
-
 tPosL findItem(tProductId , tList);
 
 #endif

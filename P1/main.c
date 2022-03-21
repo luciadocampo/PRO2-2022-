@@ -24,7 +24,7 @@
 
 void New(tList *list, tProductId product, tUserId user, tProductCategory category, tProductPrice price){
     tPosL pos;
-    if(pos = findItem(product, list) != LNULL){
+    if((pos = findItem(product, *list)) != LNULL){
         printf("+ Error: New not possible\n");
         return;
     }

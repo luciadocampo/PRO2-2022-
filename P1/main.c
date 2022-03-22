@@ -31,10 +31,10 @@ void New(tList *list, tProductId product, tUserId user, tProductCategory categor
     tItemL item;
     char* categoria = malloc(sizeof(char));
 
+    item.productPrice = price;
+    item.productCategory = category;
     strcpy(item.productId, product);
     strcpy(item.seller, user);
-    item.productCategory = category;
-    item.productPrice = price;
     item.bidCounter = 0;
 
     if(insertItem(item, LNULL, list)){
@@ -80,14 +80,17 @@ void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
         item = getItem(pos, *list);
         if(strcmp(user, item.seller) != 0){
             if(item.productPrice < price){
-                item.productPrice = price;
-                item.bidCounter++;
-                updateItem(item, pos, list);
+
                 if(item.productCategory == 0){
                     strcpy(categoria, "book");
                 }else{
                     strcpy(categoria, "painting");
                 }
+
+                item.productPrice = price;
+                item.bidCounter++;
+                updateItem(item, pos, list);
+
                 printf("* Bid: product %s seller %s category %s price %.2f bids %d\n",
                        item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
                 return;

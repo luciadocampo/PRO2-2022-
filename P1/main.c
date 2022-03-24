@@ -23,21 +23,30 @@
 
 
 void New(tList *list, tProductId product, tUserId user, tProductCategory category, tProductPrice price){
+
+    /* Objetivo: alta de un nuevo producto
+     * Entradas: lista, id del producto, id del usuario, categoria y precio del producto
+     * Salidas: lista
+     * Precondiciones: existe el producto (la posición en la lista no es nula)
+     * Postcondiciones: cambia la lista (tiene un elemento mas por lo que se modifican las posiciones)
+     * */
+
     tPosL pos;
-    if((pos = findItem(product, *list)) != LNULL){
+    if((pos = findItem(product, *list)) != LNULL){ //si la posición no es nula devuelve error
         printf("+ Error: New not possible\n");
         return;
     }
     tItemL item;
-    char* categoria = malloc(sizeof(char));
+    char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
 
+    //Metemos cada atributo en el item
     item.productPrice = price;
     item.productCategory = category;
     strcpy(item.productId, product);
     strcpy(item.seller, user);
     item.bidCounter = 0;
 
-    if(insertItem(item, LNULL, list)){
+    if(insertItem(item, LNULL, list)){ //Inserta un nuevo producto en la lista
         if(item.productCategory == 0){
             strcpy(categoria, "book");
         }else{
@@ -45,41 +54,53 @@ void New(tList *list, tProductId product, tUserId user, tProductCategory categor
         }
         printf("* New: product %s seller %s category %s price %.2f\n",
                item.productId, item.seller, categoria, item.productPrice);
-    } else {
+    } else { //Error si el elemento no se inserta en la lista
         printf("+ Error: New not possible\n");
     }
 }
 
 
 void Delete(tList *list, tProductId product){
+    /* Objetivo: baja de un producto
+     * Entradas: lista y id del producto
+     * Salidas: lista
+     * Precondiciones: existe el producto (la posición en la lista no es nula)
+     * Postcondiciones: cambia la lista (tiene un elemento menos por lo que se modifican las posiciones)
+     * */
     tPosL pos;
     tItemL item;
-    if((pos = findItem(product, *list)) == LNULL){
+    if((pos = findItem(product, *list)) == LNULL){ //si la posicion es nula devuelve error
         printf("+ Error: Delete not possible\n");
         return;
     }
-    item = getItem(pos, *list);
-    char* categoria = malloc(sizeof(char));
+    item = getItem(pos, *list); //metemos el item en una variable
+    char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
 
     if(item.productCategory == 0){
         strcpy(categoria, "book");
     }else{
         strcpy(categoria, "painting");
     }
-    deleteAtPosition(pos, list);
+    deleteAtPosition(pos, list); //borra el elemento de la lista
     printf("* Delete: product %s seller %s category %s price %.2f bids %d\n",
            item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
 }
 
 
 void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
+    /* Objetivo: puja por determinado producto
+     * Entradas: lista, id del producto, id del usuario y el precio del producto
+     * Salidas: lista
+     * Precondiciones: existe el producto en la lista
+     * Postcondiciones: las pujas de un usuario cambian en la lista
+     * */
     tPosL pos;
-    if((pos = findItem(product, *list)) != LNULL){
+    if((pos = findItem(product, *list)) != LNULL){ //Comprueba si la posicion es nula o no
         tItemL item;
-        char* categoria = malloc(sizeof(char));
-        item = getItem(pos, *list);
-        if(strcmp(user, item.seller) != 0){
-            if(item.productPrice < price){
+        char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
+        item = getItem(pos, *list); //metemos el item en una variable
+        if(strcmp(user, item.seller) != 0){ //comprobamos que el que puja no es vendedor
+            if(item.productPrice < price){ //Comprueba que el precio de la puja es mayor que el precio anterior
 
                 if(item.productCategory == 0){
                     strcpy(categoria, "book");
@@ -88,8 +109,8 @@ void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
                 }
 
                 item.productPrice = price;
-                item.bidCounter++;
-                updateItem(item, pos, list);
+                item.bidCounter++;  //incrementa la cuenta de pujas del usuario
+                updateItem(item, pos, list); //actualiza el contenido de esa posicion
 
                 printf("* Bid: product %s seller %s category %s price %.2f bids %d\n",
                        item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
@@ -102,20 +123,28 @@ void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
 
 
 void Stats(tList *list){
+    /* Objetivo: listado de los productos actuales y sus datos
+     * Entradas: lista
+     * Salidas: no hay
+     * Precondiciones: la lista no está vacía
+     * Postcondiciones: no hay
+     * */
     tPosL pos;
     tItemL item;
+
+    //declaramos y inicializamos atributos
     int numProductsBook = 0;
     int numProductsPainting = 0;
     float suma_book = 0.0;
     float suma_painting = 0.0;
     float average_book = 0.0;
     float average_painting = 0.0;
-    char* categoria = malloc(sizeof(char));
+    char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
 
-    if (!isEmptyList(*list)) {
-        pos = first(*list);
-        while (pos != LNULL) {
-            item = getItem(pos, *list);
+    if (!isEmptyList(*list)) { //comprueba que la lista no está vacía
+        pos = first(*list); //se coloca en la primera posicion de la lista
+        while (pos != LNULL) { //mientas la posición no sea nula:
+            item = getItem(pos, *list); //metemos el item en una variable
             if (item.productCategory == 0) {
                 strcpy(categoria, "book");
             } else {
@@ -124,26 +153,27 @@ void Stats(tList *list){
             printf("Product %s seller %s category %s price %.2f bids %d\n",
                    item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
             if (strcmp(categoria, "book") == 0) {
-                numProductsBook++;
+                numProductsBook++; //incrementa el contador de los productos que son libros
                 suma_book += item.productPrice;
-                average_book = (float) (suma_book / numProductsBook);
+                average_book = (float) (suma_book / numProductsBook); //calcula la media de libros
             } else {
-                numProductsPainting++;
+                numProductsPainting++; //incrementa e contador de los productos que son cuadros
                 suma_painting += item.productPrice;
-                average_painting = (float) (suma_painting / numProductsPainting);
+                average_painting = (float) (suma_painting / numProductsPainting); //calcula la media de cuadros
             }
-            pos = next(pos, *list);
+            pos = next(pos, *list); //se coloca en el siguiente elemento
         }
         printf("\nCategory  Products    Price  Average\n");
         printf("Book      %8d %8.2f %8.2f\n", numProductsBook, suma_book, average_book);
         printf("Painting  %8d %8.2f %8.2f\n", numProductsPainting, suma_painting, average_painting);
 
-    } else {
+    } else { //devuelve error si la lista está vacía
         printf("+ Error: Stats not possible\n");
     }
 
 }
 
+//Funcion que convierte un char a la categoria
 tProductCategory char_to_category(char* string){
     tProductCategory category;
     if(strcmp(string, "book") == 0){

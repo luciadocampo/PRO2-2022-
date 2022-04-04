@@ -12,7 +12,6 @@
 #include <stdbool.h>
 
 
-
 void createEmptyList(tList *L) {
     /* Objetivo:crear una lista vacía
      * Postcondiciones: la lista queda inicializada y no contiene elementos

@@ -1,10 +1,10 @@
 /*
  * TITLE: PROGRAMMING II LABS
  * SUBTITLE: Practical 2
- * AUTHOR 1: ***************************** LOGIN 1: **********
- * AUTHOR 2: ***************************** LOGIN 2: **********
- * GROUP: *.*
- * DATE: ** / ** / **
+ * AUTHOR 1: Daniel Rodriguez Sanchez LOGIN 1: daniel.rodriguez.sanchez1
+ * AUTHOR 2: Lucia Docampo Rodriguez LOGIN 2: lucia.docampo
+ * GROUP: 4.2
+ * DATE: 04 / 04 / 22
  */
 
 #include <stdio.h>

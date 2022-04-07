@@ -97,7 +97,7 @@ tPosL findPosition(tList L, tItemL d){ //funcion auxiliar
 
 //*************************************************************************
 
-bool insertItem(tItemL d, tPosL pos, tList *L) {
+bool insertItem(tItemL d, tList *L) {
     /* Objetivo:Inserta un elemento en la lista antes de la posición indicada. Si la posición es LNULL,
        entonces se añade al final
      * Salidas: true si el elemento fue insertado; false en caso contrario
@@ -106,6 +106,7 @@ bool insertItem(tItemL d, tPosL pos, tList *L) {
      * insertado pueden haber variado
      */
     tPosL q;
+    tPosL pos;
     if (!createNode(&q))  //creamos el nodo y preguntamos si se ha podido o no
         return false;
     else {
@@ -178,3 +179,4 @@ tPosL findItem(tProductId d, tList L) {
     }
     return p;
 }
+

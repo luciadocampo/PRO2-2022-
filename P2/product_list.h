@@ -47,7 +47,7 @@ tPosL first(tList);
 tPosL last(tList);
 tPosL next(tPosL, tList);
 tPosL previous(tPosL, tList);
-bool insertItem(tItemL,tPosL pos, tList *);
+bool insertItem(tItemL, tList *);
 void deleteAtPosition(tPosL, tList *);
 tItemL getItem(tPosL, tList);
 void updateItem(tItemL, tPosL, tList *);

@@ -61,7 +61,10 @@ void Delete(tList *list, tProductId product){
         }
         printf("* Delete: product %s seller %s category %s price %.2f bids %d\n",
                item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
-        deleteAtPosition(pos, list);
+        while(!isEmptyStack(item.bidStack)){ //vaciamos la cola primero
+            pop(&item.bidStack);
+        }
+        deleteAtPosition(pos, list); //quitamos el producto de la lista
     }else {
         printf("+ Error: Delete not possible\n");
     }
@@ -98,7 +101,7 @@ void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
     printf("+ Error: Bid not possible\n");
 }
 
-void Award(){
+void Award(tList *list, tProductId product){
 
 }
 
@@ -145,7 +148,8 @@ void Stats(tList *list){
                     puja_max = peek(item.bidStack).productPrice;
                 }
                 printf("Product %s seller %s category %s price %.2f bids %d top bidder %s\n",
-                       item.productId, item.seller, categoria, item.productPrice, item.bidCounter, peek(item.bidStack).bidder);
+                       item.productId, item.seller, categoria, item.productPrice, item.bidCounter,
+                       peek(item.bidStack).bidder);
             }
             if(strcmp(categoria, "book") == 0){
                 numProductsBook++;
@@ -202,7 +206,8 @@ void processCommand(tList  *list, char *commandNumber, char command, char *param
     switch (command) {
         case 'N':
             printf("********************\n");
-            printf("%s %c: product %s seller %s category %s price %s\n", commandNumber, command, param1, param2, param3, param4);
+            printf("%s %c: product %s seller %s category %s price %s\n", commandNumber, command, param1,
+                   param2, param3, param4);
             New(list, param1, param2, char_to_category(param3), (tProductPrice)strtod(param4, NULL));
             break;
 

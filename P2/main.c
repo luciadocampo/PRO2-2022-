@@ -120,20 +120,66 @@ void Award(tList *list, tProductId product){
                 pop(&item.bidStack);
             }
             deleteAtPosition(pos, list); //quitamos el producto de la lista
-        }else{
-            printf("+ Error: Award not possible\n");
+            return;
         }
-    } else{
-        printf("+ Error: Award not possible\n");
     }
-}
-
-void Withdraw(){
+    printf("+ Error: Award not possible\n");
 
 }
 
-void Remove(){
+void Withdraw(tList *list, tProductId product, tUserId user){
+    tPosL pos;
+    tItemL item;
 
+    char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
+
+    if((pos = findItem(product, *list)) != LNULL){ //que este en la lista
+        item = getItem(pos, *list);
+        if(!isEmptyStack(item.bidStack)){ //que haya pujas
+            if(strcmp(user, peek(item.bidStack).bidder) == 0){ //que el user sea el que pujó
+                if(item.productCategory == 0){
+                    strcpy(categoria, "book");
+                }else{
+                    strcpy(categoria, "painting");
+                }
+                printf("* Withdraw: product %s bidder %s category %s price %.2f bids  %d\n", product,
+                       peek(item.bidStack).bidder, categoria, peek(item.bidStack).productPrice, item.bidCounter);
+                pop(&item.bidStack); //se elimina la puja
+                item.bidCounter--; //se decrementa el contador de pujas
+                return;
+            }
+        }
+    }
+    printf("+ Error: Withdraw not possible\n");
+}
+
+void Remove(tList *list){
+    tPosL pos;
+    tItemL item;
+    char* categoria = malloc(sizeof(char));
+    int prod_sin_pujas = 0;
+
+    if(!isEmptyList(*list)){
+        pos = first(*list);
+        while(pos != LNULL){
+            item = getItem(pos, *list);
+            if(isEmptyStack(item.bidStack)){
+                if(item.productCategory == 0){
+                    strcpy(categoria, "book");
+                }else{
+                    strcpy(categoria, "painting");
+                }
+                printf("Removing product %s seller %s category %s price %.2f bids  %d\n",
+                       item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
+                deleteAtPosition(pos, list); //quitamos el producto de la lista
+                prod_sin_pujas = 1;
+            }
+            pos = next(pos, *list);
+        }
+    }
+    if(prod_sin_pujas == 0){
+        printf("+ Error: Remove not possible");
+    }
 }
 
 void Stats(tList *list){
@@ -150,8 +196,8 @@ void Stats(tList *list){
     float average_book = 0;
     float average_painting = 0;
     char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
-    float puja_max = 0;
     float incremento;
+    float incremento_max = 0;
 
     if(!isEmptyList(*list)){
         pos = first(*list);
@@ -166,9 +212,10 @@ void Stats(tList *list){
                 printf("Product %s seller %s category %s price %.2f. No bids\n",
                        item.productId, item.seller, categoria, item.productPrice);
             } else{
-                if(peek(item.bidStack).productPrice > puja_max){
+                incremento = ((peek(item.bidStack).productPrice - item.productPrice) / item.productPrice) * 100;
+                if(incremento > incremento_max){
                     max = item;
-                    puja_max = peek(item.bidStack).productPrice;
+                    incremento_max = incremento;
                 }
                 printf("Product %s seller %s category %s price %.2f bids %d top bidder %s\n",
                        item.productId, item.seller, categoria, item.productPrice, item.bidCounter,
@@ -196,12 +243,10 @@ void Stats(tList *list){
             }else{
                 strcpy(categoria, "painting");
             }
-            incremento = ((peek(max.bidStack).productPrice - max.productPrice) / max.productPrice) * 100;
             printf("Top bid: Product %s seller %s category %s price %.2f bidder %s top price %.2f increase %.2f%\n",
                    max.productId, max.seller, categoria, max.productPrice, peek(max.bidStack).bidder,
-                   peek(max.bidStack).productPrice, incremento);
+                   peek(max.bidStack).productPrice, incremento_max);
         }
-
 
     } else{ //devuelve error si la lista está vacía
         printf("+ Error: Stats not possible\n");
@@ -259,9 +304,15 @@ void processCommand(tList  *list, char *commandNumber, char command, char *param
             break;
 
         case 'W':
+            printf("********************\n");
+            printf("%s %c: product %s bidder %s\n", commandNumber, command, param1, param2);
+            Withdraw(list, param1, param2);
             break;
 
         case 'R':
+            printf("********************\n");
+            printf("%s %c\n", commandNumber, command);
+            Remove(list);
             break;
 
         default:

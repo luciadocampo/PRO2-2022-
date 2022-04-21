@@ -102,7 +102,30 @@ void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
 }
 
 void Award(tList *list, tProductId product){
+    tPosL pos;
+    tItemL item;
+    char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
 
+    if((pos = findItem(product, *list)) != LNULL){
+        item = getItem(pos, *list);
+        if(!isEmptyStack(item.bidStack)){
+            if(item.productCategory == 0){
+                strcpy(categoria, "book");
+            }else{
+                strcpy(categoria, "painting");
+            }
+            printf("* Award: product %s bidder %s category %s price %.2f\n",
+                   item.productId, peek(item.bidStack).bidder, categoria, peek(item.bidStack).productPrice);
+            while(!isEmptyStack(item.bidStack)){ //vaciamos la cola primero
+                pop(&item.bidStack);
+            }
+            deleteAtPosition(pos, list); //quitamos el producto de la lista
+        }else{
+            printf("+ Error: Award not possible\n");
+        }
+    } else{
+        printf("+ Error: Award not possible\n");
+    }
 }
 
 void Withdraw(){
@@ -230,6 +253,9 @@ void processCommand(tList  *list, char *commandNumber, char command, char *param
             break;
 
         case 'A':
+            printf("********************\n");
+            printf("%s %c: product %s\n", commandNumber, command, param1);
+            Award(list, param1);
             break;
 
         case 'W':

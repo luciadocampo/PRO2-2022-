@@ -47,8 +47,24 @@ void New(tList *list, tProductId product, tUserId user, tProductCategory categor
     }
 }
 
-void Delete(){
+void Delete(tList *list, tProductId product){
+    tPosL pos;
+    tItemL item;
+    char* categoria = malloc(sizeof(char));
 
+    if((pos = findItem(product, *list)) != LNULL){
+        item = getItem(pos, *list);
+        if(item.productCategory == 0){
+            strcpy(categoria, "book");
+        }else{
+            strcpy(categoria, "painting");
+        }
+        printf("* Delete: product %s seller %s category %s price %.2f bids %d\n",
+               item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
+        deleteAtPosition(pos, list);
+    }else {
+        printf("+ Error: Delete not possible\n");
+    }
 }
 
 void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
@@ -203,6 +219,9 @@ void processCommand(tList  *list, char *commandNumber, char command, char *param
             break;
 
         case 'D':
+            printf("********************\n");
+            printf("%s %c: product %s\n", commandNumber, command, param1);
+            Delete(list, param1);
             break;
 
         case 'A':

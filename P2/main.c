@@ -53,13 +53,12 @@ void Delete(){
 
 void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
     tPosL pos;
-    tPosS posS;
-
-    if((pos = findItem(product, *list)) != LNULL){ //Comprueba si la posicion es nula o no
+    if((pos = findItem(product, *list)) != LNULL){ //Comprueba si el producto esta en la lista
         tItemL item;
         tItemS itemS;
         char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
         item = getItem(pos, *list); //metemos el item en una variable
+
         if(strcmp(user, item.seller) != 0){ //comprobamos que el que puja no es vendedor
             if(item.productPrice < price){ //Comprueba que el precio de la puja es mayor que el precio anterior
 
@@ -68,13 +67,14 @@ void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
                 }else{
                     strcpy(categoria, "painting");
                 }
-
-                item.productPrice = price;
+                strcpy(itemS.bidder, user);
+                itemS.productPrice = price;
+                push(itemS, &item.bidStack);
                 item.bidCounter++;  //incrementa la cuenta de pujas del usuario
                 updateItem(item, pos, list); //actualiza el contenido de esa posicion
 
-                printf("* Bid: product %s seller %s category %s price %.2f bids %d\n",
-                       item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
+                printf("* Bid: product %s bidder %s category %s price %.2f bids  %d\n",
+                       item.productId, user, categoria, peek(item.bidStack).productPrice, item.bidCounter);
                 return;
             }
         }
@@ -94,8 +94,75 @@ void Remove(){
 
 }
 
-void Stats(){
+void Stats(tList *list){
+    tPosL pos;
+    tItemL item;
+    tItemL max;
+    max.bidCounter = 0;
 
+    //declaramos y inicializamos atributos
+    int numProductsBook = 0;
+    int numProductsPainting = 0;
+    float suma_book = 0;
+    float suma_painting = 0;
+    float average_book = 0;
+    float average_painting = 0;
+    char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
+    float puja_max = 0;
+    float incremento;
+
+    if(!isEmptyList(*list)){
+        pos = first(*list);
+        while(pos != LNULL){
+            item = getItem(pos, *list);
+            if (item.productCategory == 0) {
+                strcpy(categoria, "book");
+            } else {
+                strcpy(categoria, "painting");
+            }
+            if(item.bidCounter == 0){
+                printf("Product %s seller %s category %s price %.2f. No bids\n",
+                       item.productId, item.seller, categoria, item.productPrice);
+            } else{
+                if(peek(item.bidStack).productPrice > puja_max){
+                    max = item;
+                    puja_max = peek(item.bidStack).productPrice;
+                }
+                printf("Product %s seller %s category %s price %.2f bids %d top bidder %s\n",
+                       item.productId, item.seller, categoria, item.productPrice, item.bidCounter, peek(item.bidStack).bidder);
+            }
+            if(strcmp(categoria, "book") == 0){
+                numProductsBook++;
+                suma_book += item.productPrice;
+                average_book = (suma_book / (float) numProductsBook);
+            } else{
+                numProductsPainting++; //incrementa e contador de los productos que son cuadros
+                suma_painting += item.productPrice;
+                average_painting = (suma_painting / (float) numProductsPainting); //calcula la media de cuadros
+            }
+            pos = next(pos, *list);
+        }
+        printf("\nCategory  Products    Price    Average\n");
+        printf("Book      %2d %13.2f %10.2f\n", numProductsBook, suma_book, average_book);
+        printf("Painting  %2d %13.2f %10.2f\n", numProductsPainting, suma_painting, average_painting);
+        if(max.bidCounter == 0){ //si en ninguno han habido pujas
+            printf("Top bid not possible\n");
+        } else{
+            if(max.productCategory == 0){
+                strcpy(categoria, "book");
+            }else{
+                strcpy(categoria, "painting");
+            }
+            incremento = ((peek(max.bidStack).productPrice - max.productPrice) / max.productPrice) * 100;
+            printf("Top bid: Product %s seller %s category %s price %.2f bidder %s top price %.2f increase %.2f%\n",
+                   max.productId, max.seller, categoria, max.productPrice, peek(max.bidStack).bidder,
+                   peek(max.bidStack).productPrice, incremento);
+        }
+
+
+    } else{ //devuelve error si la lista está vacía
+        printf("+ Error: Stats not possible\n");
+    }
 }
 
 //Funcion que convierte un char a la categoria
@@ -121,20 +188,32 @@ void processCommand(tList  *list, char *commandNumber, char command, char *param
             printf("********************\n");
             printf("%s %c: product %s seller %s category %s price %s\n", commandNumber, command, param1, param2, param3, param4);
             New(list, param1, param2, char_to_category(param3), (tProductPrice)strtod(param4, NULL));
+            break;
 
-            break;
         case 'S':
+            printf("********************\n");
+            printf("%s %c\n", commandNumber, command);
+            Stats(list);
             break;
+
         case 'B':
+            printf("********************\n");
+            printf("%s %c: product %s bidder %s price %s\n", commandNumber, command, param1, param2, param3);
+            Bid(list, param1, param2, (tProductPrice)strtod(param3, NULL));
             break;
+
         case 'D':
             break;
+
         case 'A':
             break;
+
         case 'W':
             break;
+
         case 'R':
             break;
+
         default:
             break;
     }

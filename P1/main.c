@@ -150,6 +150,10 @@ void Stats(tList *list){
             } else {
                 strcpy(categoria, "painting");
             }
+            if(item.bidCounter == 0){
+                printf("Product %s seller %s category %s price %.2f bids %d\n",
+                       item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
+            }
             printf("Product %s seller %s category %s price %.2f bids %d\n",
                    item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
             if (strcmp(categoria, "book") == 0) {

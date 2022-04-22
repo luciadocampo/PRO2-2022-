@@ -146,6 +146,7 @@ void Withdraw(tList *list, tProductId product, tUserId user){
                        peek(item.bidStack).bidder, categoria, peek(item.bidStack).productPrice, item.bidCounter);
                 pop(&item.bidStack); //se elimina la puja
                 item.bidCounter--; //se decrementa el contador de pujas
+                updateItem(item, pos, list);
                 return;
             }
         }

@@ -17,6 +17,14 @@
 #define MAX_BUFFER 255
 
 void New(tList *list, tProductId product, tUserId user, tProductCategory category, tProductPrice price){
+
+    /* Objetivo: alta de un nuevo producto
+     * Entradas: lista, id del producto, id del usuario, categoria y precio del producto
+     * Salidas: lista
+     * Precondiciones: existe el producto (la posición en la lista no es nula)
+     * Postcondiciones: cambia la lista (tiene un elemento mas por lo que se modifican las posiciones)
+     * */
+
     tPosL pos;
     if((pos = findItem(product, *list)) != LNULL){ //si la posición no es nula devuelve error
         printf("+ Error: New not possible\n");
@@ -48,12 +56,20 @@ void New(tList *list, tProductId product, tUserId user, tProductCategory categor
 }
 
 void Delete(tList *list, tProductId product){
+
+    /* Objetivo: baja de un producto
+     * Entradas: lista y id del producto
+     * Salidas: lista
+     * Precondiciones: existe el producto (la posición en la lista no es nula)
+     * Postcondiciones: cambia la lista (tiene un elemento menos por lo que se modifican las posiciones)
+     * */
+
     tPosL pos;
     tItemL item;
-    char* categoria = malloc(sizeof(char));
+    char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
 
-    if((pos = findItem(product, *list)) != LNULL){
-        item = getItem(pos, *list);
+    if((pos = findItem(product, *list)) != LNULL){ //si la posición no es nula:
+        item = getItem(pos, *list);   //metemos el item en una variable
         if(item.productCategory == 0){
             strcpy(categoria, "book");
         }else{
@@ -61,16 +77,24 @@ void Delete(tList *list, tProductId product){
         }
         printf("* Delete: product %s seller %s category %s price %.2f bids %d\n",
                item.productId, item.seller, categoria, item.productPrice, item.bidCounter);
-        while(!isEmptyStack(item.bidStack)){ //vaciamos la cola primero
+        while(!isEmptyStack(item.bidStack)){ //mientras la pila no está vacía eliminamos el elemento que se encuentra en la cima
             pop(&item.bidStack);
         }
         deleteAtPosition(pos, list); //quitamos el producto de la lista
-    }else {
+    }else { //si la posición es nula devuelve error
         printf("+ Error: Delete not possible\n");
     }
 }
 
 void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
+
+    /* Objetivo: puja por determinado producto
+     * Entradas: lista, id del producto, id del usuario y el precio del producto
+     * Salidas: lista
+     * Precondiciones: existe el producto en la lista
+     * Postcondiciones: las pujas de un usuario cambian en la lista
+     * */
+
     tPosL pos;
     if((pos = findItem(product, *list)) != LNULL){ //Comprueba si el producto esta en la lista
         tItemL item;
@@ -88,7 +112,7 @@ void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
                 }
                 strcpy(itemS.bidder, user);
                 itemS.productPrice = price;
-                push(itemS, &item.bidStack);
+                push(itemS, &item.bidStack); //inserta el elemento en la cima de la pila
                 item.bidCounter++;  //incrementa la cuenta de pujas del usuario
                 updateItem(item, pos, list); //actualiza el contenido de esa posicion
 
@@ -102,13 +126,21 @@ void Bid(tList *list, tProductId product, tUserId user, tProductPrice price){
 }
 
 void Award(tList *list, tProductId product){
+
+    /* Objetivo: se asigna el ganador de una puja
+     * Entradas: lista, id del producto
+     * Salidas:
+     * Precondiciones:
+     * Postcondiciones:
+     * */
+
     tPosL pos;
     tItemL item;
     char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
 
-    if((pos = findItem(product, *list)) != LNULL){
-        item = getItem(pos, *list);
-        if(!isEmptyStack(item.bidStack)){
+    if((pos = findItem(product, *list)) != LNULL){ //si la posición no es nula:
+        item = getItem(pos, *list); //metemos el item en una variable
+        if(!isEmptyStack(item.bidStack)){ //comprobamos que la pila no está vacía (hay pujas)
             if(item.productCategory == 0){
                 strcpy(categoria, "book");
             }else{
@@ -116,7 +148,7 @@ void Award(tList *list, tProductId product){
             }
             printf("* Award: product %s bidder %s category %s price %.2f\n",
                    item.productId, peek(item.bidStack).bidder, categoria, peek(item.bidStack).productPrice);
-            while(!isEmptyStack(item.bidStack)){ //vaciamos la cola primero
+            while(!isEmptyStack(item.bidStack)){ //mientras la pila no está vacía eliminamos el elemento que se encuentra en la cima
                 pop(&item.bidStack);
             }
             deleteAtPosition(pos, list); //quitamos el producto de la lista
@@ -128,14 +160,22 @@ void Award(tList *list, tProductId product){
 }
 
 void Withdraw(tList *list, tProductId product, tUserId user){
+
+    /* Objetivo: la máxima puja actual del producto es retirada
+     * Entradas: lista, id del usuario, id del producto
+     * Salidas:
+     * Precondiciones:
+     * Postcondiciones:
+     * */
+
     tPosL pos;
     tItemL item;
 
     char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
 
-    if((pos = findItem(product, *list)) != LNULL){ //que este en la lista
-        item = getItem(pos, *list);
-        if(!isEmptyStack(item.bidStack)){ //que haya pujas
+    if((pos = findItem(product, *list)) != LNULL){ //si la posición no es nula:
+        item = getItem(pos, *list); //metemos el item en una variable
+        if(!isEmptyStack(item.bidStack)){ //que haya pujas (la pila no está vacía)
             if(strcmp(user, peek(item.bidStack).bidder) == 0){ //que el user sea el que pujó
                 if(item.productCategory == 0){
                     strcpy(categoria, "book");
@@ -155,16 +195,24 @@ void Withdraw(tList *list, tProductId product, tUserId user){
 }
 
 void Remove(tList *list){
+
+    /* Objetivo: elimina los productos sin pujas
+     * Entradas: lista
+     * Salidas:
+     * Precondiciones: la lista no está vacía
+     * Postcondiciones:
+     * */
+
     tPosL pos;
     tItemL item;
-    char* categoria = malloc(sizeof(char));
+    char* categoria = malloc(sizeof(char)); //reserva de memoria para la categoría
     int prod_sin_pujas = 0;
 
-    if(!isEmptyList(*list)){
+    if(!isEmptyList(*list)){ //comprobamos que hay elementos en la lista
         pos = first(*list);
         while(pos != LNULL){
-            item = getItem(pos, *list);
-            if(isEmptyStack(item.bidStack)){
+            item = getItem(pos, *list);  //metemos el item en una variable
+            if(isEmptyStack(item.bidStack)){ //si el producto no tiene pujas lanzamos el siguiente mensaje, quitamos el producto de la lista y actualizamos el contador de "productos sin puja"
                 if(item.productCategory == 0){
                     strcpy(categoria, "book");
                 }else{
@@ -175,15 +223,23 @@ void Remove(tList *list){
                 deleteAtPosition(pos, list); //quitamos el producto de la lista
                 prod_sin_pujas = 1;
             }
-            pos = next(pos, *list);
+            pos = next(pos, *list); //pasamos al siguiente producto
         }
     }
-    if(prod_sin_pujas == 0){
+    if(prod_sin_pujas == 0){ //si no hay productos sin puja lanza error
         printf("+ Error: Remove not possible");
     }
 }
 
 void Stats(tList *list){
+
+    /* Objetivo: listado de los productos actuales y sus datos
+     * Entradas: lista
+     * Salidas: no hay
+     * Precondiciones: la lista no está vacía
+     * Postcondiciones: no hay
+     * */
+
     tPosL pos;
     tItemL item;
     tItemL max;

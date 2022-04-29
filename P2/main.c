@@ -129,9 +129,9 @@ void Award(tList *list, tProductId product){
 
     /* Objetivo: se asigna el ganador de una puja
      * Entradas: lista, id del producto
-     * Salidas:
-     * Precondiciones:
-     * Postcondiciones:
+     * Salidas: lista modificada
+     * Precondiciones: existe el producto en la lista y este tiene alguna puja
+     * Postcondiciones: se elimina el producto de la lista
      * */
 
     tPosL pos;
@@ -163,9 +163,9 @@ void Withdraw(tList *list, tProductId product, tUserId user){
 
     /* Objetivo: la máxima puja actual del producto es retirada
      * Entradas: lista, id del usuario, id del producto
-     * Salidas:
-     * Precondiciones:
-     * Postcondiciones:
+     * Salidas: lista modificada
+     * Precondiciones: existe el producto en la lista y han pujado por él
+     * Postcondiciones: se actualiza la pila de pujas de dicho producto
      * */
 
     tPosL pos;
@@ -198,9 +198,9 @@ void Remove(tList *list){
 
     /* Objetivo: elimina los productos sin pujas
      * Entradas: lista
-     * Salidas:
-     * Precondiciones: la lista no está vacía
-     * Postcondiciones:
+     * Salidas: lista modificada
+     * Precondiciones: la lista no está vacía y hay algún producto sin puja
+     * Postcondiciones: se elimina los productos sin puja de la lista
      * */
 
     tPosL pos;
@@ -256,19 +256,19 @@ void Stats(tList *list){
     float incremento;
     float incremento_max = 0;
 
-    if(!isEmptyList(*list)){
-        pos = first(*list);
+    if(!isEmptyList(*list)){  //si la lista no está vacía:
+        pos = first(*list);  //nos colocamos en el primer producto
         while(pos != LNULL){
-            item = getItem(pos, *list);
+            item = getItem(pos, *list);  //metemos el item en una variable
             if (item.productCategory == 0) {
                 strcpy(categoria, "book");
             } else {
                 strcpy(categoria, "painting");
             }
-            if(item.bidCounter == 0){
+            if(item.bidCounter == 0){  //si no hay pujas imprimime el siguiente mensaje
                 printf("Product %s seller %s category %s price %.2f. No bids\n",
                        item.productId, item.seller, categoria, item.productPrice);
-            } else{
+            } else{  //si hay pujas calculamos el incremento
                 incremento = ((peek(item.bidStack).productPrice - item.productPrice) / item.productPrice) * 100;
                 if(incremento > incremento_max){
                     max = item;
@@ -279,9 +279,9 @@ void Stats(tList *list){
                        peek(item.bidStack).bidder);
             }
             if(strcmp(categoria, "book") == 0){
-                numProductsBook++;
+                numProductsBook++;  //incrementa e contador de los productos que son libros
                 suma_book += item.productPrice;
-                average_book = (suma_book / (float) numProductsBook);
+                average_book = (suma_book / (float) numProductsBook); //calcula la media de libros
             } else{
                 numProductsPainting++; //incrementa e contador de los productos que son cuadros
                 suma_painting += item.productPrice;
@@ -292,7 +292,7 @@ void Stats(tList *list){
         printf("\nCategory  Products    Price    Average\n");
         printf("Book      %2d %13.2f %10.2f\n", numProductsBook, suma_book, average_book);
         printf("Painting  %2d %13.2f %10.2f\n", numProductsPainting, suma_painting, average_painting);
-        if(max.bidCounter == 0){ //si en ninguno han habido pujas
+        if(max.bidCounter == 0){   //si en ninguno han habido pujas
             printf("Top bid not possible\n");
         } else{
             if(max.productCategory == 0){
@@ -305,7 +305,7 @@ void Stats(tList *list){
                    peek(max.bidStack).productPrice, incremento_max);
         }
 
-    } else{ //devuelve error si la lista está vacía
+    } else{   //devuelve error si la lista está vacía
         printf("+ Error: Stats not possible\n");
     }
 }
